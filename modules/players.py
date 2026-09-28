@@ -1,27 +1,31 @@
-from db import get_conn
+import sqlite3
 
-def add_player(name, role, team_id, batting_position):
+DB = "cricket.db"
+
+
+def get_conn():
+    return sqlite3.connect(DB)
+
+
+def add_player(name, role, team_id, bat_pos):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO players (name, role, team_id, batting_position, created_at)
-        VALUES (%s, %s, %s, %s, NOW())
-        RETURNING id;
-    """, (name, role, team_id, batting_position))
-    player_id = cur.fetchone()[0]
+        INSERT INTO players (name, role, team_id, bat_pos, status, is_impact)
+        VALUES (?, ?, ?, ?, 'active', 0)
+    """, (name, role, team_id, bat_pos))
     conn.commit()
     conn.close()
-    return player_id
 
 
 def list_players(team_id):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("""
-        SELECT id, name, role, batting_position, is_captain, is_impact, retired_hurt
+        SELECT id, name, role, bat_pos
         FROM players
-        WHERE team_id = %s
-        ORDER BY batting_position;
+        WHERE team_id = ?
+        ORDER BY bat_pos
     """, (team_id,))
     rows = cur.fetchall()
     conn.close()

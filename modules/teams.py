@@ -1,23 +1,24 @@
-from db import get_conn
+import sqlite3
 
-def add_team(name, logo=None):
+DB = "cricket.db"
+
+
+def get_conn():
+    return sqlite3.connect(DB)
+
+
+def add_team(name):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO teams (name, logo, created_at)
-        VALUES (%s, %s, NOW())
-        RETURNING id;
-    """, (name, logo))
-    team_id = cur.fetchone()[0]
+    cur.execute("INSERT INTO teams (name) VALUES (?)", (name,))
     conn.commit()
     conn.close()
-    return team_id
 
 
 def list_teams():
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("SELECT id, name, logo, created_at FROM teams ORDER BY id;")
+    cur.execute("SELECT id, name FROM teams ORDER BY id")
     rows = cur.fetchall()
     conn.close()
     return rows
