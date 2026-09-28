@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: sillypointers-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+
+    envVars:
+      - key: DB_HOST
+        value: dpg-darem87avrl4c73ec357g-a.oregon-postgres.render.com
+
+      - key: DB_NAME
+        value: sillypointers_db
+
+      - key: DB_USER
+        value: sillypointers_db_user
+
+      - key: DB_PASS
+        value: DYEjDJFQsUK37i8WXLWcveYZzheCXV5D
+
+      - key: DB_PORT
+        value: 5432
